@@ -1,0 +1,85 @@
+﻿Imports System.Data
+Imports System.Data.SqlClient
+
+Partial Class register
+    Inherits System.Web.UI.Page
+    Dim regid As Integer
+
+
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        regid = 0
+    End Sub
+
+    Protected Sub sb_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles sb.Click
+        Dim con As New SqlConnection
+        Dim cmd As New SqlCommand
+        con = New SqlConnection("server=USER-PC\SQLEXPRESS2008;uid=sa;PWD=sa@1234;database=foodapp")
+        Dim query As String
+        query = "select count(*)from REGISTER"
+        cmd = New SqlCommand(query, con)
+
+        con.Open()
+        regid = cmd.ExecuteScalar()
+        regid = regid + 1
+        con.Close()
+        Response.Write(regid)
+
+        'Inserting web form into registration table'
+
+        con = New SqlConnection("server=USER-PC\SQLEXPRESS2008;uid=sa;PWD=sa@1234;database=foodapp")
+        Dim bdate As String
+        bdate = dd0.Text & "-" & dd1.SelectedValue & "-" & dd2.Text
+
+
+        query = "insert into REGISTER values(" & regid & ",'" & fnt.Text & "','" & at.Text & "','" & pht.Text & "'," & bdate & ",'" & gen.SelectedValue & "','" & ct.Text & "','" & pct.Text & "','" & emt.Text & "','" & unt.Text & "','" & pt.Text & "')"
+        cmd = New SqlCommand(query, con)
+       
+        con.Open()
+        cmd.ExecuteNonQuery()
+
+        con.Close()
+        con = New SqlConnection("server=USER-PC\SQLEXPRESS2008;uid=sa;PWD=sa@1234;database=foodapp")
+
+      
+
+        query = "insert into LOGIN values(" & regid & ",'" & unt.Text & "','" & pt.Text & "')"
+        cmd = New SqlCommand(query, con)
+
+        con.Open()
+        cmd.ExecuteNonQuery()
+
+        con.Close()
+
+
+
+    End Sub
+
+    Protected Sub pt_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles pt.TextChanged
+        pp.Visible = True
+
+        Dim x As String
+        x = pp.Text
+        Dim l As Integer
+
+        l = x.Length
+
+        'pp.Text = "weak"
+
+
+        If l <= 4 Then
+            pp.ForeColor = Drawing.Color.Red
+            pp.Text = "Weak"
+        ElseIf l <= 7 Then
+            pp.ForeColor = Drawing.Color.Blue
+
+            pp.Text = "Medium"
+        End If
+
+
+
+    End Sub
+
+   
+End Class
+
+
